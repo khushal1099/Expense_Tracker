@@ -1,7 +1,6 @@
 import 'package:expense_tracker/models/expense_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ExpenseItem extends StatelessWidget {
   ExpenseItem(this.expense, {super.key});
@@ -27,13 +26,15 @@ class ExpenseItem extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  '\$${expense.amount.toStringAsPrecision(2)}',
+                  '\$${expense.amount}',
                 ),
                 const Spacer(),
                 Row(
                   children: [
                     Icon(categoryIcons[expense.category]),
-                    SizedBox(width: 8,),
+                    SizedBox(
+                      width: 8,
+                    ),
                     Text(
                       expense.formattedDate,
                     ),
