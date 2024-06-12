@@ -1,59 +1,37 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
+// To parse this JSON data, do
+//
+//     final expense = expenseFromJson(jsonString);
 
-final formatter = DateFormat.yMd();
+import 'dart:convert';
 
-const uuid = Uuid();
+Expense expenseFromJson(String str) => Expense.fromJson(json.decode(str));
 
-enum Category { food, travel, leisure, work }
-
-const categoryIcons = {
-  Category.food: Icons.lunch_dining,
-  Category.travel: Icons.flight_takeoff,
-  Category.leisure: Icons.movie,
-  Category.work: Icons.work,
-};
+String expenseToJson(Expense data) => json.encode(data.toJson());
 
 class Expense {
-  Expense(
-      {required this.title,
-      required this.amount,
-      required this.date,
-      required this.category})
-      : id = uuid.v4();
+  String? title;
+  String? type;
+  double? amount;
+  String? date;
 
-  final String id;
-  final String title;
-  final double amount;
-  final DateTime date;
-  final Category category;
-
-  String get formattedDate {
-    return formatter.format(date);
-  }
-}
-
-class ExpenseBucket {
-  const ExpenseBucket({
-    required this.category,
-    required this.expenses,
+  Expense({
+    this.title,
+    this.type,
+    this.amount,
+    this.date,
   });
 
-  ExpenseBucket.forCategory(List<Expense> allExpenses, this.category)
-      : expenses = allExpenses
-            .where((element) => element.category == category)
-            .toList();
+  factory Expense.fromJson(Map<String, dynamic> json) => Expense(
+    title: json["title"],
+    type: json["source"],
+    amount: json["amount"],
+    date: json["date"],
+  );
 
-  final Category category;
-  final List<Expense> expenses;
-
-  double get totalExpenses {
-    double sum = 0;
-
-    for (final expense in expenses) {
-      sum += expense.amount;
-    }
-    return sum;
-  }
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "source": type,
+    "amount": amount,
+    "date": date,
+  };
 }

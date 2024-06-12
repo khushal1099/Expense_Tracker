@@ -1,91 +1,48 @@
-import 'package:expense_tracker/widgets/expense.dart';
+import 'package:expense_tracker/screens/homepage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'firebase/firebase_options.dart';
+import 'screens/authentication/login_screen.dart';
 
-void main() {
-  runApp(
-    MyApp(),
+TextEditingController emailController = TextEditingController();
+TextEditingController passwordController = TextEditingController();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   var kColorScheme = ColorScheme.fromSeed(
-    seedColor: Color.fromARGB(255, 119, 90, 246),
+    seedColor: const Color.fromARGB(255, 119, 90, 246),
   );
 
   var kDarkColorScheme = ColorScheme.fromSeed(
-    seedColor: Color.fromARGB(255, 5, 99, 125),
+    seedColor: const Color.fromARGB(255, 5, 99, 125),
   );
+
+  var kDarkScheme = ColorScheme.fromSeed(seedColor: Colors.white);
+  var kLightScheme = ColorScheme.fromSeed(seedColor: Colors.black);
 
   @override
   Widget build(BuildContext context) {
+    var cu = FirebaseAuth.instance.currentUser;
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      darkTheme: ThemeData.dark().copyWith(
-        brightness: Brightness.dark,
-        colorScheme: kDarkColorScheme,
-        textTheme: ThemeData().textTheme.copyWith(
-              titleLarge: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: kDarkColorScheme.onSecondaryContainer,
-                fontSize: 14,
-              ),
-            ),
-        appBarTheme: AppBarTheme().copyWith(
-          backgroundColor: kDarkColorScheme.primary.withOpacity(0.65),
-          foregroundColor: Colors.white,
-        ),
-        iconTheme: IconThemeData().copyWith(
-          color: Colors.black,
-        ),
-        cardTheme: CardTheme().copyWith(
-          color: kDarkColorScheme.primaryContainer,
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: kDarkColorScheme.primaryContainer,
-            foregroundColor: kDarkColorScheme.onPrimaryContainer,
-          ),
-        ),
-        bottomSheetTheme: BottomSheetThemeData().copyWith(
-          backgroundColor: kDarkColorScheme.primaryContainer,
-        ),
-        dialogTheme: DialogTheme()
-            .copyWith(backgroundColor: kDarkColorScheme.primaryContainer),
-      ),
-      theme: ThemeData().copyWith(
-        useMaterial3: true,
-        colorScheme: kColorScheme,
-        appBarTheme: const AppBarTheme().copyWith(
-          backgroundColor: kColorScheme.primary,
-          foregroundColor: Colors.white,
-        ),
-        cardTheme: CardTheme().copyWith(
-          color: kColorScheme.secondaryContainer,
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: kColorScheme.primaryContainer),
-        ),
-        textTheme: ThemeData().textTheme.copyWith(
-              titleLarge: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: kColorScheme.onSecondaryContainer,
-                fontSize: 14,
-              ),
-            ),
-        bottomSheetTheme: BottomSheetThemeData().copyWith(
-          backgroundColor: kColorScheme.primaryContainer,
-        ),
-      ),
-      themeMode: ThemeMode.system,
-      home: const MyHomePage(title: 'Flutter ExpenseTracker'),
+      home: cu != null ? const HomePage() : const LoginScreen(),
     );
   }
 }
