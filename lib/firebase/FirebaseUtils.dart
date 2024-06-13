@@ -10,20 +10,7 @@ class FirebaseUtils {
 
   static String expenses = "Expenses";
   static String incomes = "Incomes";
-
-  static Stream<List<Expense>> getExpanse() {
-    var v = FirebaseFirestore.instance.collection(expenses).snapshots();
-    var e = v.map((event) => event.docs.map((e) {
-          var i = e.data();
-          return Expense(
-              title: i['title'],
-              amount: i['amount'],
-              date: i['date'],
-              type: i['type']);
-        }).toList());
-
-    return e;
-  }
+  static var cu = FirebaseAuth.instance.currentUser;
 
   static void addUser(User? users) {
     AuthUser authUser = AuthUser(
@@ -39,7 +26,6 @@ class FirebaseUtils {
   }
 
   static void addExpenses(Expense expense) {
-    final cu = FirebaseAuth.instance.currentUser;
     FirebaseFirestore.instance
         .collection('Users')
         .doc(cu?.uid ?? '')
@@ -57,7 +43,11 @@ class FirebaseUtils {
   }
 
   static void addIncomes(Income income) {
-    FirebaseFirestore.instance.collection(incomes).add(
+    FirebaseFirestore.instance
+        .collection('Users')
+        .doc(cu?.uid ?? '')
+        .collection(incomes)
+        .add(
       {
         "title": income.title,
         "amount": income.amount,
@@ -67,5 +57,25 @@ class FirebaseUtils {
     ).then((value) {
       print("Income Added Successfully");
     });
+  }
+
+  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getIncome() async {
+    var v = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .collection("Incomes")
+        .get();
+
+    return v.docs;
+  }
+
+  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getExpense() async {
+    var v = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .collection("Expenses")
+        .get();
+
+    return v.docs;
   }
 }

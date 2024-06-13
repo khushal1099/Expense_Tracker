@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ContainerWidget extends StatelessWidget {
+class ContainerWidget extends StatefulWidget {
   final double height;
   final double width;
   final double borderRadius;
   final String text;
   final Color iconcolor;
+  final double amount;
   final IconData icon;
   final List<Color> colors;
 
@@ -19,17 +20,25 @@ class ContainerWidget extends StatelessWidget {
     required this.iconcolor,
     required this.icon,
     required this.colors,
+    required this.amount,
   });
+
+  @override
+  State<ContainerWidget> createState() => _ContainerWidgetState();
+}
+
+class _ContainerWidgetState extends State<ContainerWidget> {
+  RxDouble am = 0.0.obs;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: height,
-      width: width,
+      height: widget.height,
+      width: widget.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(widget.borderRadius),
         gradient: LinearGradient(
-          colors: colors,
+          colors: widget.colors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -41,19 +50,19 @@ class ContainerWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                text,
+                widget.text,
                 style: TextStyle(fontSize: 25),
               ),
               Icon(
-                icon,
-                color: iconcolor,
+                widget.icon,
+                color: widget.iconcolor,
                 size: 30,
               )
             ],
           ),
           Text(
-            "1000.60",
-            style: TextStyle(color: iconcolor),
+            widget.amount.toString(),
+            style: TextStyle(color: widget.iconcolor),
           ),
         ],
       ),

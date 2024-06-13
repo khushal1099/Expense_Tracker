@@ -64,7 +64,7 @@ class _AddExpenseState extends State<AddExpense> {
                   height: 15,
                 ),
                 Text(
-                  "Exxpense Type:-",
+                  "Expense Type:-",
                   style: TextStyle(color: ColorsUtil.lightBg),
                 ),
                 SizedBox(
