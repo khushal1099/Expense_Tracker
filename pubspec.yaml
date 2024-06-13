@@ -44,6 +44,8 @@ dependencies:
   transparent_image: ^2.0.1
   animated_text_kit: ^4.2.2
   google_fonts: ^4.0.3
+  image_picker: 1.0.1
+  firebase_storage: 11.5.1
 
 dev_dependencies:
   flutter_test:

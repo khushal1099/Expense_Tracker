@@ -2,7 +2,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/screens/authentication/signup_screen.dart';
 import 'package:expense_tracker/utils/ColorsUtil.dart';
-import 'package:expense_tracker/utils/SizeUtils.dart';
 import 'package:expense_tracker/widgets/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,11 +20,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  @override
-  void initState() {
-    SizeUtils.config();
-    super.initState();
-  }
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   @override
@@ -87,13 +81,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   icon: Icons.email,
                   textController: emailController,
                   isPadding: true,
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value!.isEmpty) {
                       return "Please Enter Your Email";
                     } else if (!value.contains('@')) {
                       return "Please Enter Valid Email";
                     }
-                    return '';
+                    return null;
                   },
                 ),
                 TextformField(
@@ -102,11 +96,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   textController: passwordController,
                   isPassword: true,
                   isPadding: true,
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value!.isEmpty) {
                       return "Please Enter Your Password";
                     }
-                    return '';
+                    return null;
                   },
                 ),
                 SizedBox(
@@ -115,21 +109,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 Button(
                   text: "Log In",
                   onTap: () async {
-                    // var cu = FirebaseAuth.instance.currentUser;
-                    // if (cu != null) {
-                    //   print("Alredy Login");
-                    // }
-                    UserCredential user =
-                        await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    print("user:--- $user");
-                    emailController.clear();
-                    passwordController.clear();
-                    Get.offAll(
-                      HomePage(),
-                    );
+                    var cu = FirebaseAuth.instance.currentUser;
+                    if (cu != null) {
+                      print("Alredy Login");
+                    } else {
+                      UserCredential user = await FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+                      emailController.clear();
+                      passwordController.clear();
+                      Get.offAll(
+                        HomePage(),
+                      );
+                    }
                   },
                   bRadius: 10,
                   bColor: Color(0xffFAAE18),

@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/models/expense_model.dart';
 import 'package:expense_tracker/models/income_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../models/user_model.dart';
 
 class FirebaseUtils {
   FirebaseUtils._();
@@ -22,8 +25,26 @@ class FirebaseUtils {
     return e;
   }
 
+  static void addUser(User? users) {
+    AuthUser authUser = AuthUser(
+      name: users?.displayName ?? '',
+      image: users?.photoURL ?? '',
+      email: users?.email ?? emailController.text,
+    );
+
+    FirebaseFirestore.instance
+        .collection("Users")
+        .doc(users?.uid)
+        .set(authUser.toJson());
+  }
+
   static void addExpenses(Expense expense) {
-    FirebaseFirestore.instance.collection(expenses).add(
+    final cu = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore.instance
+        .collection('Users')
+        .doc(cu?.uid ?? '')
+        .collection(expenses)
+        .add(
       {
         "title": expense.title,
         "amount": expense.amount,

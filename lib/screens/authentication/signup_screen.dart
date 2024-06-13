@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:expense_tracker/models/authentication_models/add_user_model.dart';
+import 'package:expense_tracker/firebase/FirebaseUtils.dart';
+import 'package:expense_tracker/screens/user_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../../main.dart';
 import '../../utils/ColorsUtil.dart';
-import '../../utils/SizeUtils.dart';
 import '../../widgets/Textformfield.dart';
 import '../../widgets/animated_text_kit.dart';
 import '../../widgets/button.dart';
@@ -21,12 +21,9 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  void initState() {
-    SizeUtils.config();
-    super.initState();
-  }
-
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -87,13 +84,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   icon: Icons.email,
                   textController: emailController,
                   isPadding: true,
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value!.isEmpty) {
                       return "Please Enter Your Email";
                     } else if (!value.contains('@')) {
                       return "Please Enter Valid Email";
                     }
-                    return '';
+                    return null;
                   },
                 ),
                 TextformField(
@@ -102,33 +99,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   textController: passwordController,
                   isPassword: true,
                   isPadding: true,
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value!.isEmpty) {
                       return "Please Enter Your Password";
                     }
-                    return '';
+                    return null;
                   },
                 ),
-                SizedBox(
-                  height: 30,
-                ),
+                const SizedBox(height: 30),
                 Button(
                   text: "Sign Up",
+                  isLoading: isLoading,
                   onTap: () async {
-                    // var cu = FirebaseAuth.instance.currentUser;
-
-                    UserCredential user = await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: emailController.text,
-                            password: passwordController.text);
-                    print("user:--- $user");
-                    AddUserModel().addUser(user.user);
-                    Get.offAll(
-                      HomePage(),
-                    );
+                    try {
+                      var cu = FirebaseAuth.instance.currentUser;
+                      if (cu != null) {
+                        print("Alredy Signup");
+                      } else {
+                        if (_formkey.currentState!.validate()) {
+                          isLoading = true;
+                          setState(() {});
+                          UserCredential user = await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                                  email: emailController.text,
+                                  password: passwordController.text);
+                          print("user:--- $user");
+                          FirebaseUtils.addUser(user.user);
+                          Get.offAll(const UserDetails());
+                        }
+                      }
+                    } on FirebaseAuthException catch (e) {
+                      print('error-------${e.message}');
+                      print(e.code);
+                    }
                   },
                   bRadius: 10,
-                  bColor: Color(0xffFAAE18),
+                  bColor: const Color(0xffFAAE18),
                   height: 40,
                   width: 150,
                 ),

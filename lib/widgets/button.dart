@@ -7,24 +7,27 @@ class Button extends StatelessWidget {
   final double width;
   final Color bColor;
   final Color? textColor;
+  final bool isLoading;
   final void Function() onTap;
 
-  const Button(
-      {super.key,
-      required this.text,
-      required this.onTap,
-      required this.bRadius,
-      required this.bColor,
-      required this.height,
-      required this.width,
-      this.textColor});
+  const Button({
+    super.key,
+    required this.text,
+    required this.onTap,
+    required this.bRadius,
+    required this.bColor,
+    required this.height,
+    required this.width,
+    this.textColor,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: InkWell(
-        onTap: onTap,
+        onTap: isLoading ? null : onTap,
         child: Container(
           height: height,
           width: width,
@@ -33,14 +36,16 @@ class Button extends StatelessWidget {
             borderRadius: BorderRadius.circular(bRadius),
           ),
           child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 20,
-                color: textColor == null ? Colors.black : textColor,
-              ),
-            ),
+            child: isLoading
+                ? const CircularProgressIndicator()
+                : Text(
+                    text,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      color: textColor ?? Colors.black,
+                    ),
+                  ),
           ),
         ),
       ),

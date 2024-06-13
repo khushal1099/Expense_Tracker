@@ -1,6 +1,6 @@
 import 'package:expense_tracker/screens/add_expense.dart';
 import 'package:expense_tracker/screens/add_income.dart';
-import 'package:expense_tracker/screens/home/balance_page.dart';
+import 'package:expense_tracker/screens/balance_page.dart';
 import 'package:expense_tracker/screens/settings.dart';
 import 'package:expense_tracker/utils/ColorsUtil.dart';
 import 'package:flutter/material.dart';

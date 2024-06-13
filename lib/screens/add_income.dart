@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:expense_tracker/firebase/FirebaseUtils.dart';
 import 'package:expense_tracker/utils/ColorsUtil.dart';
 import 'package:expense_tracker/widgets/Textformfield.dart';
@@ -8,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../models/income_model.dart';
-import '../utils/SizeUtils.dart';
 
 class AddIncome extends StatefulWidget {
   const AddIncome({super.key});
@@ -18,11 +15,6 @@ class AddIncome extends StatefulWidget {
 }
 
 class _AddIncomeState extends State<AddIncome> {
-  void initState() {
-    SizeUtils.config();
-    super.initState();
-  }
-
   final titleController = TextEditingController();
   final typeController = TextEditingController();
   final amountController = TextEditingController();
@@ -57,11 +49,11 @@ class _AddIncomeState extends State<AddIncome> {
                 textController: titleController,
                 hinttext: 'Enter title',
                 isPadding: false,
-                validator: (String? value) {
+                validator: (value) {
                   if (value!.isEmpty) {
                     return "Please Enter Your Title";
                   }
-                  return '';
+                  return null;
                 },
               ),
               SizedBox(
@@ -78,11 +70,11 @@ class _AddIncomeState extends State<AddIncome> {
                 textController: typeController,
                 hinttext: 'Enter Type',
                 isPadding: false,
-                validator: (String? value) {
+                validator: ( value) {
                   if (value!.isEmpty) {
                     return "Please Enter Your Income Type";
                   }
-                  return '';
+                  return null;
                 },
               ),
               SizedBox(
@@ -98,12 +90,14 @@ class _AddIncomeState extends State<AddIncome> {
               TextformField(
                 textController: amountController,
                 hinttext: 'Enter Amount',
+                isNumber: true,
                 isPadding: false,
-                validator: (String? value) {
+                validator: (value) {
                   if (value!.isEmpty) {
                     return "Please Enter Amount";
                   }
-                  return '';
+
+                  return null;
                 },
               ),
               SizedBox(
@@ -151,7 +145,10 @@ class _AddIncomeState extends State<AddIncome> {
                 child: Button(
                   text: 'Save',
                   onTap: () {
-                    if (_formkey.currentState!.validate()) {
+                    print(_formkey.currentState?.validate());
+                    if (!_formkey.currentState!.validate()) {
+                      print('Error');
+                    } else {
                       FirebaseUtils.addIncomes(
                         Income(
                           title: titleController.text,
@@ -162,11 +159,11 @@ class _AddIncomeState extends State<AddIncome> {
                           ),
                         ),
                       );
+                      titleController.clear();
+                      typeController.clear();
+                      amountController.clear();
+                      selectedDate.value = null;
                     }
-                    titleController.clear();
-                    typeController.clear();
-                    amountController.clear();
-                    selectedDate.value = null;
                   },
                   bRadius: 10,
                   bColor: Colors.blue,
