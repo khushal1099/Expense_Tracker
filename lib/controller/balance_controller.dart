@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/firebase/FirebaseUtils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class BalanceController extends GetxController {
@@ -36,23 +35,5 @@ class BalanceController extends GetxController {
 
   Future<void> getUserdata() async {
     user.value = await FirebaseUtils.getUser();
-  }
-
-  Future<void> removeIncome(String docId) async {
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(FirebaseAuth.instance.currentUser?.uid)
-        .collection("Incomes")
-        .doc(docId)
-        .delete();
-  }
-
-  Future<void> removeExpense(String docId) async {
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(FirebaseAuth.instance.currentUser?.uid)
-        .collection("Expenses")
-        .doc(docId)
-        .delete();
   }
 }

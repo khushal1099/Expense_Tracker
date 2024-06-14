@@ -82,28 +82,8 @@ class FirebaseUtils {
   }
 
   static Future<DocumentSnapshot<Map<String, dynamic>>> getUser() async {
-    var result = await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(cu?.uid)
-        .get();
+    var result =
+        await FirebaseFirestore.instance.collection("Users").doc(cu?.uid).get();
     return result;
-  }
-
-  static Future<void> removeIncomes(String docId)async{
-    var result = await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(cu?.uid)
-        .collection("Incomes")
-        .doc(docId).delete();
-    return result;
-  }
-
-  static Future<void> removeExpenses(String docId)async{
-   var result = await FirebaseFirestore.instance
-       .collection("Users")
-       .doc(cu?.uid)
-       .collection("Expenses")
-       .doc(docId).delete();
-   return result;
   }
 }
