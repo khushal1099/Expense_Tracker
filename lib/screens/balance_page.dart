@@ -124,7 +124,6 @@ class BalancePage extends StatelessWidget {
                               child: CircularProgressIndicator(),
                             );
                           }
-
                           if (data.isEmpty) {
                             return Center(
                               child: Center(
@@ -135,12 +134,6 @@ class BalancePage extends StatelessWidget {
                               ),
                             );
                           }
-                          double d = 0;
-                          for (var doc in data) {
-                            d += doc['amount'] ?? 0;
-                          }
-                          controller.totalExpense.value = d;
-
                           return Incomes_Expenses(
                             list: data,
                             isIncome: false,

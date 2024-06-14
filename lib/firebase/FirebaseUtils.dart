@@ -59,23 +59,51 @@ class FirebaseUtils {
     });
   }
 
-  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getIncome() async {
-    var v = await FirebaseFirestore.instance
+  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getIncome() async {
+    var result = await FirebaseFirestore.instance
         .collection("Users")
-        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .doc(cu?.uid)
         .collection("Incomes")
         .get();
 
-    return v.docs;
+    return result.docs;
   }
 
-  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getExpense() async {
-    var v = await FirebaseFirestore.instance
+  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getExpense() async {
+    var result = await FirebaseFirestore.instance
         .collection("Users")
-        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .doc(cu?.uid)
         .collection("Expenses")
         .get();
 
-    return v.docs;
+    return result.docs;
+  }
+
+  static Future<DocumentSnapshot<Map<String, dynamic>>> getUser() async {
+    var result = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(cu?.uid)
+        .get();
+    return result;
+  }
+
+  static Future<void> removeIncomes(String docId)async{
+    var result = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(cu?.uid)
+        .collection("Incomes")
+        .doc(docId).delete();
+    return result;
+  }
+
+  static Future<void> removeExpenses(String docId)async{
+   var result = await FirebaseFirestore.instance
+       .collection("Users")
+       .doc(cu?.uid)
+       .collection("Expenses")
+       .doc(docId).delete();
+   return result;
   }
 }
