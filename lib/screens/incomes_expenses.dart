@@ -24,7 +24,6 @@ class Incomes_Expenses extends StatefulWidget {
 }
 
 class _Incomes_ExpensesState extends State<Incomes_Expenses> {
-
   final controller = Get.put(BalanceController());
   final RxList<QueryDocumentSnapshot<Map<String, dynamic>>> dataList =
       <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
@@ -38,7 +37,7 @@ class _Incomes_ExpensesState extends State<Incomes_Expenses> {
     super.initState();
   }
 
-  void _deleteItem(String docId) async {
+  Future<void> _deleteItem(String docId) async {
     await FirebaseFirestore.instance
         .collection("Users")
         .doc(FirebaseAuth.instance.currentUser?.uid)
@@ -68,114 +67,128 @@ class _Incomes_ExpensesState extends State<Incomes_Expenses> {
       backgroundColor: ColorsUtil.darkBg,
       appBar: widget.isAppbar == true
           ? AppBar(
-        backgroundColor: ColorsUtil.darkBg,
-        foregroundColor: Colors.white,
-        title: Text(widget.isIncome ? "Incomes" : "Expenses"),
-        centerTitle: true,
-      )
+              backgroundColor: ColorsUtil.darkBg,
+              foregroundColor: Colors.white,
+              title: Text(widget.isIncome ? "Incomes" : "Expenses"),
+              centerTitle: true,
+            )
           : null,
-      body: dataList.isEmpty ?
-      Center(
-        child: Center(child: CircularProgressIndicator()),
-      )
+      body: dataList.isEmpty
+          ? Center(
+              child: Text(
+                widget.isIncome ? "Add Incomes" : "Add Expenses",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            )
           : Obx(
-            () =>
-            ListView.builder(
-              itemCount: dataList.length,
-              itemBuilder: (context, index) {
-                var inc = dataList[index];
-                return Padding(
-                  padding: widget.isPadding == true
-                      ? EdgeInsets.symmetric(horizontal: 20)
-                      : EdgeInsets.zero,
-                  child: Dismissible(
-                    key: ValueKey(inc.id),
-                    onDismissed: (direction) async {
-                      _lastDeletedItem = dataList[index];
-                      _lastDeleteIndex = index;
-                      dataList.removeAt(index);
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              '${widget.isIncome
-                                  ? "Income"
-                                  : "Expense"} deleted successfully'),
-                          action: SnackBarAction(
-                            label: "Undo",
-                            onPressed: () {
-                              _undoDelete();
-                            },
-                          ),
+              () => ListView.builder(
+                itemCount: dataList.length,
+                itemBuilder: (context, index) {
+                  var inc = dataList[index];
+                  if (dataList.isEmpty) {
+                    return Center(
+                      child: Text(
+                        widget.isIncome ? "Add Incomes" : "Add Expenses",
+                        style: TextStyle(
+                          color: Colors.white,
                         ),
-                      );
-                      Future.delayed(
-                        Duration(seconds: 5),
-                            () {
-                          if (_lastDeletedItem != null) {
-                            _deleteItem(_lastDeletedItem!.id);
-                            _lastDeletedItem = null;
-                            _lastDeleteIndex = -1;
-                          }
-                        },
-                      );
-                    },
-                    child: Card(
-                      color: widget.isIncome
-                          ? const Color(0xffa0ffa3)
-                          : const Color(0xffff9ca9),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 3),
-                            child: Row(
-                              children: [
-                                Text(
-                                  inc["title"],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Text(
-                                  inc["amount"].toString(),
-                                ),
-                              ],
+                      ),
+                    );
+                  }
+                  return Padding(
+                    padding: widget.isPadding == true
+                        ? EdgeInsets.symmetric(horizontal: 20)
+                        : EdgeInsets.zero,
+                    child: Dismissible(
+                      key: ValueKey(dataList[index]),
+                      onDismissed: (direction) async {
+                        _lastDeletedItem = dataList[index];
+                        _lastDeleteIndex = index;
+                        dataList.removeAt(index);
+                        dataList.refresh();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                '${widget.isIncome ? "Income" : "Expense"} deleted successfully'),
+                            action: SnackBarAction(
+                              label: "Undo",
+                              onPressed: () {
+                                _undoDelete();
+                              },
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                right: 10, left: 10, bottom: 3),
-                            child: Row(
-                              children: [
-                                Text(
-                                  inc["type"],
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black54,
+                        );
+                        Future.delayed(
+                          Duration(seconds: 5),
+                          () async {
+                            if (_lastDeletedItem != null) {
+                              await _deleteItem(_lastDeletedItem!.id);
+                              _lastDeletedItem = null;
+                              _lastDeleteIndex = -1;
+                              controller.getIncome();
+                              controller.getExpense();
+                            }
+                          },
+                        );
+                      },
+                      child: Card(
+                        color: widget.isIncome
+                            ? const Color(0xffa0ffa3)
+                            : const Color(0xffff9ca9),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 3),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    inc["title"],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                                const Spacer(),
-                                Text(
-                                  inc["date"],
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black54,
+                                  const Spacer(),
+                                  Text(
+                                    inc["amount"].toString(),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 10, left: 10, bottom: 3),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    inc["type"],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    inc["date"],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-      ),
     );
   }
 }

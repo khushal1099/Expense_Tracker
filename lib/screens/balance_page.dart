@@ -1,12 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_tracker/firebase/FirebaseUtils.dart';
 import 'package:expense_tracker/utils/ColorsUtil.dart';
 import 'package:expense_tracker/widgets/container.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/balance_controller.dart';
 import 'incomes_expenses.dart';
 
-class BalancePage extends StatelessWidget {
+class BalancePage extends StatefulWidget {
   BalancePage({super.key});
+
+  @override
+  State<BalancePage> createState() => _BalancePageState();
+}
+
+class _BalancePageState extends State<BalancePage> {
+  @override
+  void initState() {
+    FirebaseUtils.getIncome();
+    FirebaseUtils.getExpense();
+    super.initState();
+  }
 
   final controller = Get.put(BalanceController());
 
@@ -14,7 +29,10 @@ class BalancePage extends StatelessWidget {
   Widget build(BuildContext context) {
     controller.getExpense();
     controller.getIncome();
+    var v;
 
+    print(
+        "controller.totalIncome   ${controller.totalIncome}  ${controller.totalExpense} ${v} ");
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -58,6 +76,7 @@ class BalancePage extends StatelessWidget {
                 Obx(() {
                   var v = controller.totalIncome.value -
                       controller.totalExpense.value;
+                  print(v);
                   return ContainerWidget(
                     height: 100,
                     width: 150,

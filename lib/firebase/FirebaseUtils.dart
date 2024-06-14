@@ -11,6 +11,8 @@ class FirebaseUtils {
   static String expenses = "Expenses";
   static String incomes = "Incomes";
   static var cu = FirebaseAuth.instance.currentUser;
+  static QuerySnapshot<Map<String, dynamic>>? inc;
+  static QuerySnapshot<Map<String, dynamic>>? exp;
 
   static void addUser(User? users) {
     AuthUser authUser = AuthUser(
@@ -60,7 +62,7 @@ class FirebaseUtils {
   }
 
   static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-      getIncome() async {
+  getIncome() async {
     var result = await FirebaseFirestore.instance
         .collection("Users")
         .doc(cu?.uid)

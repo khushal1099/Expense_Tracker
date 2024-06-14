@@ -37,6 +37,8 @@ class _AddIncomeState extends State<AddIncome> {
         child: Form(
           key: _formkey,
           child: ListView(
+            // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            // physics: BouncingScrollPhysics(),
             children: [
               Text(
                 "Title:-",
@@ -70,7 +72,7 @@ class _AddIncomeState extends State<AddIncome> {
                 textController: typeController,
                 hinttext: 'Enter Type',
                 isPadding: false,
-                validator: ( value) {
+                validator: (value) {
                   if (value!.isEmpty) {
                     return "Please Enter Your Income Type";
                   }
@@ -105,7 +107,6 @@ class _AddIncomeState extends State<AddIncome> {
               ),
               IconButton(
                 onPressed: () async {
-                  FocusScope.of(context).unfocus();
                   final now = DateTime.now();
                   final firstDate = DateTime(now.year - 1, now.month, now.day);
                   var pickedDate = await showDatePicker(

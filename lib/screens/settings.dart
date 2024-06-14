@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/controller/balance_controller.dart';
 import 'package:expense_tracker/screens/authentication/login_screen.dart';
 import 'package:expense_tracker/screens/incomes_expenses.dart';
@@ -105,6 +106,7 @@ class _SettingPageState extends State<SettingPage> {
                             return Obx(
                               () {
                                 var data = controller.expenseList.value;
+                                print("data====== $data");
                                 return Incomes_Expenses(
                                   isPadding: true,
                                   isAppbar: true,

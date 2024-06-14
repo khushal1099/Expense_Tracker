@@ -11,7 +11,7 @@ class BalanceController extends GetxController {
 
   Future<void> getExpense() async {
     expenseList.value = await FirebaseUtils.getExpense();
-
+    print("expenseList.value-----${expenseList.value!.map((e) => e["title"])}");
     double v = 0;
     if (expenseList.value != null) {
       for (var doc in expenseList.value!) {

@@ -5,8 +5,6 @@ import 'package:expense_tracker/screens/settings.dart';
 import 'package:expense_tracker/utils/ColorsUtil.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/get_instance.dart';
 import '../controller/pageview_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -31,7 +29,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: ColorsUtil.darkBg,
       body: Obx(
-        ()=> PageView(
+        () => PageView(
+          physics: NeverScrollableScrollPhysics(),
           controller: pagecontroller.pageController.value,
           onPageChanged: (value) {
             pagecontroller.onPageChanged(value);
@@ -40,39 +39,41 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: Obx(
-        ()=> BottomNavigationBar(
-          backgroundColor: Colors.black,
-          currentIndex: pagecontroller.currentIndex.value,
-          onTap: (value) {
-            pagecontroller.changePage(value);
-          },
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: Colors.black,
-          showUnselectedLabels: true,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.import_export_rounded,
-                color: Colors.green,
+        () => Theme(
+          data: Theme.of(context).copyWith(canvasColor: Colors.black54),
+          child: BottomNavigationBar(
+            currentIndex: pagecontroller.currentIndex.value,
+            onTap: (value) {
+              pagecontroller.changePage(value);
+            },
+            unselectedItemColor: Colors.grey,
+            selectedItemColor: Colors.white,
+            showUnselectedLabels: true,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_filled),
+                label: 'Home',
               ),
-              label: 'Income',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.import_export_rounded,
-                color: Colors.red,
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.import_export_rounded,
+                  color: Colors.green,
+                ),
+                label: 'Income',
               ),
-              label: 'Expense',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.import_export_rounded,
+                  color: Colors.red,
+                ),
+                label: 'Expense',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Settings',
+              ),
+            ],
+          ),
         ),
       ),
     );

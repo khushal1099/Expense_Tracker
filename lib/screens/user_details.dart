@@ -116,7 +116,6 @@ class _UserDetailsState extends State<UserDetails> {
                 text: 'Save',
                 isLoading: isLoading,
                 onTap: () async {
-                  FocusScope.of(context).unfocus();
                   try {
                     final cu = FirebaseAuth.instance.currentUser;
                     if (cu != null) {

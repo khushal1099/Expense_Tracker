@@ -32,6 +32,7 @@ class _TextformFieldState extends State<TextformField> {
   RxBool isValue = false.obs;
 
   final controller = Get.put(PasswordController());
+  FocusNode focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +47,7 @@ class _TextformFieldState extends State<TextformField> {
                     widget.textController.isNull ? null : widget.textController,
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: controller.isShow.value,
+                focusNode: focusNode,
                 autofocus: true,
                 onChanged: (value) {
                   isValue.value = value.isNotEmpty;
@@ -74,6 +76,7 @@ class _TextformFieldState extends State<TextformField> {
               controller:
                   widget.textController.isNull ? null : widget.textController,
               keyboardType: widget.isNumber ? TextInputType.number : null,
+              focusNode: focusNode,
               inputFormatters: widget.isNumber
                   ? <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly,
@@ -88,6 +91,9 @@ class _TextformFieldState extends State<TextformField> {
                 fillColor: ColorsUtil.lightBg,
                 filled: true,
               ),
+              onTapOutside: (event) {
+                focusNode.unfocus();
+              },
               autofocus: true,
               validator: widget.validator,
             ),
