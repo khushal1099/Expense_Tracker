@@ -70,6 +70,9 @@ class _TextformFieldState extends State<TextformField> {
                           )
                         : const SizedBox()),
                 validator: widget.validator,
+                onTapOutside: (event) {
+                  focusNode.unfocus();
+                },
               ),
             )
           : TextFormField(

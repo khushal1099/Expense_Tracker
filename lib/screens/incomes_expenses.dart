@@ -77,7 +77,7 @@ class _Incomes_ExpensesState extends State<Incomes_Expenses> {
           ? Center(
               child: Text(
                 widget.isIncome ? "Add Incomes" : "Add Expenses",
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                 ),
               ),
@@ -91,7 +91,7 @@ class _Incomes_ExpensesState extends State<Incomes_Expenses> {
                     return Center(
                       child: Text(
                         widget.isIncome ? "Add Incomes" : "Add Expenses",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                         ),
                       ),
@@ -99,7 +99,7 @@ class _Incomes_ExpensesState extends State<Incomes_Expenses> {
                   }
                   return Padding(
                     padding: widget.isPadding == true
-                        ? EdgeInsets.symmetric(horizontal: 20)
+                        ? const EdgeInsets.symmetric(horizontal: 20)
                         : EdgeInsets.zero,
                     child: Dismissible(
                       key: ValueKey(dataList[index]),
@@ -107,9 +107,13 @@ class _Incomes_ExpensesState extends State<Incomes_Expenses> {
                         _lastDeletedItem = dataList[index];
                         _lastDeleteIndex = index;
                         dataList.removeAt(index);
+                        widget.isIncome
+                            ? controller.getIncome()
+                            : controller.getExpense();
                         dataList.refresh();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            duration: Duration(seconds: 3),
                             content: Text(
                                 '${widget.isIncome ? "Income" : "Expense"} deleted successfully'),
                             action: SnackBarAction(
@@ -121,14 +125,15 @@ class _Incomes_ExpensesState extends State<Incomes_Expenses> {
                           ),
                         );
                         Future.delayed(
-                          Duration(seconds: 5),
+                          const Duration(seconds: 5),
                           () async {
                             if (_lastDeletedItem != null) {
                               await _deleteItem(_lastDeletedItem!.id);
                               _lastDeletedItem = null;
                               _lastDeleteIndex = -1;
-                              controller.getIncome();
-                              controller.getExpense();
+                              widget.isIncome
+                                  ? controller.getIncome()
+                                  : controller.getExpense();
                             }
                           },
                         );

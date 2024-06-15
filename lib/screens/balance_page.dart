@@ -16,23 +16,13 @@ class BalancePage extends StatefulWidget {
 }
 
 class _BalancePageState extends State<BalancePage> {
-  @override
-  void initState() {
-    FirebaseUtils.getIncome();
-    FirebaseUtils.getExpense();
-    super.initState();
-  }
-
   final controller = Get.put(BalanceController());
 
   @override
   Widget build(BuildContext context) {
     controller.getExpense();
     controller.getIncome();
-    var v;
 
-    print(
-        "controller.totalIncome   ${controller.totalIncome}  ${controller.totalExpense} ${v} ");
     return DefaultTabController(
       length: 2,
       child: Scaffold(

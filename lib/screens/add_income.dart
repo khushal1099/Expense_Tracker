@@ -5,6 +5,7 @@ import 'package:expense_tracker/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../controller/balance_controller.dart';
 import '../models/income_model.dart';
 
 class AddIncome extends StatefulWidget {
@@ -21,6 +22,7 @@ class _AddIncomeState extends State<AddIncome> {
   final Rxn<DateTime> selectedDate = Rxn<DateTime>();
   final formatter = DateFormat.yMd();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  final controller = Get.put(BalanceController());
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +162,8 @@ class _AddIncomeState extends State<AddIncome> {
                           ),
                         ),
                       );
+                      controller.getIncome();
+
                       titleController.clear();
                       typeController.clear();
                       amountController.clear();
