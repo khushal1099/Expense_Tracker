@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class PasswordController extends GetxController{
-  RxBool isShow = false.obs;
+  RxBool isShow = true.obs;
 
   void passwordToggle(){
     isShow.value = !isShow.value;

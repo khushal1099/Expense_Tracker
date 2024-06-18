@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Button extends StatelessWidget {
   final String text;
@@ -27,6 +28,7 @@ class Button extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: InkWell(
+        overlayColor: MaterialStateProperty.all(Colors.transparent),
         onTap: isLoading ? null : onTap,
         child: Container(
           height: height,
@@ -37,10 +39,10 @@ class Button extends StatelessWidget {
           ),
           child: Center(
             child: isLoading
-                ? SizedBox(
+                ? const SizedBox(
               height: 20,
                   width: 20,
-                  child: const CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                       color: Colors.white,
                     ),
                 )

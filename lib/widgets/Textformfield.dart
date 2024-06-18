@@ -11,9 +11,11 @@ class TextformField extends StatefulWidget {
   final bool isPassword;
   final bool isPadding;
   final FormFieldValidator<dynamic>? validator;
-  final bool isNumber;
+  final List<TextInputFormatter>? inputFormatter;
+  final TextInputType? keyboardType;
+  final Function()? onSubmit;
 
-  TextformField({
+  const TextformField({
     super.key,
     required this.hinttext,
     this.icon,
@@ -21,7 +23,9 @@ class TextformField extends StatefulWidget {
     this.isPassword = false,
     required this.isPadding,
     required this.validator,
-    this.isNumber = false,
+    this.onSubmit,
+    this.keyboardType,
+    this.inputFormatter,
   });
 
   @override
@@ -43,8 +47,7 @@ class _TextformFieldState extends State<TextformField> {
       child: widget.isPassword
           ? Obx(
               () => TextFormField(
-                controller:
-                    widget.textController.isNull ? null : widget.textController,
+                controller: widget.textController,
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: controller.isShow.value,
                 focusNode: focusNode,
@@ -53,22 +56,23 @@ class _TextformFieldState extends State<TextformField> {
                   isValue.value = value.isNotEmpty;
                 },
                 decoration: InputDecoration(
-                    prefixIcon: widget.icon.isNull ? null : Icon(widget.icon),
-                    hintText: widget.hinttext,
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: InputBorder.none,
-                    fillColor: ColorsUtil.lightBg,
-                    filled: true,
-                    suffixIcon: isValue.value
-                        ? InkWell(
-                            onTap: () {
-                              controller.passwordToggle();
-                            },
-                            child: controller.isShow.value
-                                ? const Icon(Icons.visibility_rounded)
-                                : const Icon(Icons.visibility_off),
-                          )
-                        : const SizedBox()),
+                  prefixIcon: widget.icon == null ? null : Icon(widget.icon),
+                  hintText: widget.hinttext,
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  border: InputBorder.none,
+                  fillColor: ColorsUtil.lightBg,
+                  filled: true,
+                  suffixIcon: isValue.value
+                      ? InkWell(
+                          onTap: () {
+                            controller.passwordToggle();
+                          },
+                          child: controller.isShow.value
+                              ? const Icon(Icons.visibility_rounded)
+                              : const Icon(Icons.visibility_off),
+                        )
+                      : const SizedBox(),
+                ),
                 validator: widget.validator,
                 onTapOutside: (event) {
                   focusNode.unfocus();
@@ -76,18 +80,13 @@ class _TextformFieldState extends State<TextformField> {
               ),
             )
           : TextFormField(
-              controller:
-                  widget.textController.isNull ? null : widget.textController,
-              keyboardType: widget.isNumber ? TextInputType.number : null,
+              controller: widget.textController,
+              keyboardType: widget.keyboardType ?? TextInputType.text,
               focusNode: focusNode,
-              inputFormatters: widget.isNumber
-                  ? <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                    ]
-                  : null,
+              inputFormatters: widget.inputFormatter,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                prefixIcon: widget.icon.isNull ? null : Icon(widget.icon),
+                prefixIcon: widget.icon == null ? null : Icon(widget.icon),
                 hintText: widget.hinttext,
                 hintStyle: const TextStyle(color: Colors.grey),
                 border: InputBorder.none,

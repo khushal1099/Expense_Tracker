@@ -1,10 +1,12 @@
 import 'package:expense_tracker/controller/balance_controller.dart';
 import 'package:expense_tracker/models/expense_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../firebase/FirebaseUtils.dart';
 import '../utils/ColorsUtil.dart';
+import '../utils/Utils.dart';
 import '../widgets/Textformfield.dart';
 import '../widgets/button.dart';
 
@@ -31,7 +33,7 @@ class _AddExpenseState extends State<AddExpense> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: ColorsUtil.lightBg,
-        title: Text("Add Expense"),
+        title: const Text("Add Expense"),
         centerTitle: true,
       ),
       body: Padding(
@@ -44,12 +46,13 @@ class _AddExpenseState extends State<AddExpense> {
                 "Title:-",
                 style: TextStyle(color: ColorsUtil.lightBg),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               TextformField(
                 textController: titleController,
                 hinttext: 'Enter title',
+                keyboardType: TextInputType.text,
                 isPadding: false,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -58,19 +61,20 @@ class _AddExpenseState extends State<AddExpense> {
                   return null;
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Text(
                 "Expense Type:-",
                 style: TextStyle(color: ColorsUtil.lightBg),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               TextformField(
                 textController: typeController,
                 hinttext: 'Enter Type',
+                keyboardType: TextInputType.text,
                 isPadding: false,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -79,21 +83,24 @@ class _AddExpenseState extends State<AddExpense> {
                   return null;
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Text(
                 "Amount:-",
                 style: TextStyle(color: ColorsUtil.lightBg),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               TextformField(
                 textController: amountController,
                 hinttext: 'Enter Amount',
                 isPadding: false,
-                isNumber: true,
+                keyboardType: TextInputType.number,
+                inputFormatter: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 validator: (value) {
                   if (value!.isEmpty) {
                     return "Please Enter Amount";
@@ -101,7 +108,7 @@ class _AddExpenseState extends State<AddExpense> {
                   return null;
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               IconButton(
@@ -119,11 +126,11 @@ class _AddExpenseState extends State<AddExpense> {
                 },
                 icon: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.calendar_month,
                       color: Colors.white,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Obx(
@@ -138,7 +145,7 @@ class _AddExpenseState extends State<AddExpense> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Center(
@@ -159,6 +166,11 @@ class _AddExpenseState extends State<AddExpense> {
 
                       controller.getExpense();
 
+                      Utils.showSnackbar(
+                        "Expense Added Successfully",
+                        const Duration(seconds: 2),
+                        Colors.green,
+                      );
                       titleController.clear();
                       typeController.clear();
                       amountController.clear();

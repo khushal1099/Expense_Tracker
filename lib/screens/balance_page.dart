@@ -1,15 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_tracker/firebase/FirebaseUtils.dart';
 import 'package:expense_tracker/utils/ColorsUtil.dart';
 import 'package:expense_tracker/widgets/container.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/balance_controller.dart';
 import 'incomes_expenses.dart';
 
 class BalancePage extends StatefulWidget {
-  BalancePage({super.key});
+  const BalancePage({super.key});
 
   @override
   State<BalancePage> createState() => _BalancePageState();
@@ -41,7 +38,7 @@ class _BalancePageState extends State<BalancePage> {
                         height: 100,
                         width: 150,
                         borderRadius: 10,
-                        colors: [Colors.green, Colors.yellow],
+                        colors: const [Colors.green, Colors.yellow],
                         text: "Income",
                         iconcolor: Colors.green,
                         icon: Icons.import_export_rounded,
@@ -53,7 +50,7 @@ class _BalancePageState extends State<BalancePage> {
                         height: 100,
                         width: 150,
                         borderRadius: 10,
-                        colors: [Colors.red, Colors.yellow],
+                        colors: const [Colors.red, Colors.yellow],
                         text: 'Expense',
                         iconcolor: Colors.red,
                         icon: Icons.import_export_rounded,
@@ -66,19 +63,18 @@ class _BalancePageState extends State<BalancePage> {
                 Obx(() {
                   var v = controller.totalIncome.value -
                       controller.totalExpense.value;
-                  print(v);
                   return ContainerWidget(
                     height: 100,
                     width: 150,
                     borderRadius: 10,
-                    colors: [Colors.lightBlue, Colors.yellow],
+                    colors: const [Colors.lightBlue, Colors.yellow],
                     text: 'Balance',
                     iconcolor: Colors.white,
                     icon: Icons.account_balance_wallet,
                     amount: v,
                   );
                 }),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Container(
                   height: 50,
                   width: double.infinity,
@@ -97,58 +93,12 @@ class _BalancePageState extends State<BalancePage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Expanded(
+                 const Expanded(
                   child: TabBarView(
                     physics: NeverScrollableScrollPhysics(),
                     children: [
-                      Obx(
-                        () {
-                          var data = controller.incomeList.value;
-                          if (data == null) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (data.isEmpty) {
-                            return Center(
-                              child: Center(
-                                child: const Text(
-                                  "Add Incomes",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            );
-                          }
-                          return Incomes_Expenses(
-                            list: data,
-                            isIncome: true,
-                          );
-                        },
-                      ),
-                      Obx(
-                        () {
-                          var data = controller.expenseList.value;
-                          if (data == null) {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (data.isEmpty) {
-                            return Center(
-                              child: Center(
-                                child: const Text(
-                                  "Add Expenses",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            );
-                          }
-                          return Incomes_Expenses(
-                            list: data,
-                            isIncome: false,
-                          );
-                        },
-                      ),
+                      IncomesExpenses(isIncome: true),
+                      IncomesExpenses(isIncome: false),
                     ],
                   ),
                 ),

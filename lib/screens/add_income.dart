@@ -1,8 +1,10 @@
 import 'package:expense_tracker/firebase/FirebaseUtils.dart';
 import 'package:expense_tracker/utils/ColorsUtil.dart';
+import 'package:expense_tracker/utils/Utils.dart';
 import 'package:expense_tracker/widgets/Textformfield.dart';
 import 'package:expense_tracker/widgets/button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controller/balance_controller.dart';
@@ -31,7 +33,7 @@ class _AddIncomeState extends State<AddIncome> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: ColorsUtil.lightBg,
-        title: Text("Add Income"),
+        title: const Text("Add Income"),
         centerTitle: true,
       ),
       body: Padding(
@@ -39,19 +41,16 @@ class _AddIncomeState extends State<AddIncome> {
         child: Form(
           key: _formkey,
           child: ListView(
-            // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            // physics: BouncingScrollPhysics(),
             children: [
               Text(
                 "Title:-",
                 style: TextStyle(color: ColorsUtil.lightBg),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               TextformField(
                 textController: titleController,
                 hinttext: 'Enter title',
+                keyboardType: TextInputType.text,
                 isPadding: false,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -60,19 +59,16 @@ class _AddIncomeState extends State<AddIncome> {
                   return null;
                 },
               ),
-              SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
               Text(
                 "Income Type:-",
                 style: TextStyle(color: ColorsUtil.lightBg),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               TextformField(
                 textController: typeController,
                 hinttext: 'Enter Type',
+                keyboardType: TextInputType.text,
                 isPadding: false,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -81,20 +77,19 @@ class _AddIncomeState extends State<AddIncome> {
                   return null;
                 },
               ),
-              SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
               Text(
                 "Amount:-",
                 style: TextStyle(color: ColorsUtil.lightBg),
               ),
-              SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               TextformField(
                 textController: amountController,
                 hinttext: 'Enter Amount',
-                isNumber: true,
+                keyboardType: TextInputType.number,
+                inputFormatter: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 isPadding: false,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -104,9 +99,7 @@ class _AddIncomeState extends State<AddIncome> {
                   return null;
                 },
               ),
-              SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
               IconButton(
                 onPressed: () async {
                   final now = DateTime.now();
@@ -118,17 +111,14 @@ class _AddIncomeState extends State<AddIncome> {
                     initialDate: now,
                   );
                   if (pickedDate != null) selectedDate.value = pickedDate;
-                  print(selectedDate.value);
                 },
                 icon: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.calendar_month,
                       color: Colors.white,
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    const SizedBox(width: 10),
                     Obx(
                       () => Text(
                         selectedDate.value == null
@@ -141,17 +131,12 @@ class _AddIncomeState extends State<AddIncome> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Center(
                 child: Button(
                   text: 'Save',
                   onTap: () {
-                    print(_formkey.currentState?.validate());
-                    if (!_formkey.currentState!.validate()) {
-                      print('Error');
-                    } else {
+                    if (_formkey.currentState!.validate()) {
                       FirebaseUtils.addIncomes(
                         Income(
                           title: titleController.text,
@@ -163,7 +148,11 @@ class _AddIncomeState extends State<AddIncome> {
                         ),
                       );
                       controller.getIncome();
-
+                      Utils.showSnackbar(
+                        "Income Added Successfully",
+                        const Duration(seconds: 2),
+                        Colors.green,
+                      );
                       titleController.clear();
                       typeController.clear();
                       amountController.clear();

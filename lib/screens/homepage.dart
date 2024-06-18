@@ -18,10 +18,10 @@ class _HomePageState extends State<HomePage> {
   final pagecontroller = Get.put(PageviewController());
 
   final List<Widget> pages = [
-    BalancePage(),
-    AddIncome(),
-    AddExpense(),
-    SettingPage(),
+    const BalancePage(),
+    const AddIncome(),
+    const AddExpense(),
+    const SettingPage(),
   ];
 
   @override
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: ColorsUtil.darkBg,
       body: Obx(
         () => PageView(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           controller: pagecontroller.pageController.value,
           onPageChanged: (value) {
             pagecontroller.onPageChanged(value);
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
             unselectedItemColor: Colors.grey,
             selectedItemColor: Colors.white,
             showUnselectedLabels: true,
-            items: [
+            items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_filled),
                 label: 'Home',

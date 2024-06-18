@@ -51,7 +51,7 @@ class _ContainerWidgetState extends State<ContainerWidget> {
             children: [
               Text(
                 widget.text,
-                style: TextStyle(fontSize: 25),
+                style: const TextStyle(fontSize: 25),
               ),
               Icon(
                 widget.icon,

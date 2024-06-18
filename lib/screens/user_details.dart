@@ -1,22 +1,16 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/controller/image_controller.dart';
-import 'package:expense_tracker/firebase/FirebaseUtils.dart';
-import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/models/user_model.dart';
 import 'package:expense_tracker/screens/homepage.dart';
 import 'package:expense_tracker/utils/ColorsUtil.dart';
 import 'package:expense_tracker/widgets/Textformfield.dart';
 import 'package:expense_tracker/widgets/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:image_picker/image_picker.dart';
+
+import '../utils/Utils.dart';
 
 class UserDetails extends StatefulWidget {
   const UserDetails({super.key});
@@ -27,8 +21,8 @@ class UserDetails extends StatefulWidget {
 
 class _UserDetailsState extends State<UserDetails> {
   final nameController = TextEditingController();
-  final imageControlller = ImageController();
-  bool isLoading = false;
+  final imageController = ImageController();
+  RxBool isLoading = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +49,13 @@ class _UserDetailsState extends State<UserDetails> {
                   Obx(
                     () => CircleAvatar(
                       maxRadius: 70,
-                      backgroundImage: imageControlller.image.isNotEmpty
+                      backgroundImage: imageController.image.isNotEmpty
                           ? FileImage(
-                              File(imageControlller.image.value),
+                              File(imageController.image.value),
                             )
                           : null,
-                      child: imageControlller.image.isEmpty
-                          ? Icon(
+                      child: imageController.image.isEmpty
+                          ? const Icon(
                               Icons.person,
                               size: 80,
                             )
@@ -73,9 +67,9 @@ class _UserDetailsState extends State<UserDetails> {
                     right: 0,
                     child: IconButton(
                       onPressed: () {
-                        imageControlller.addcameraimage();
+                        imageController.addcameraimage();
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.photo_camera,
                         color: Colors.grey,
                         size: 25,
@@ -87,9 +81,9 @@ class _UserDetailsState extends State<UserDetails> {
                     left: 0,
                     child: IconButton(
                       onPressed: () {
-                        imageControlller.addgalleryimage();
+                        imageController.addgalleryimage();
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.photo,
                         color: Colors.grey,
                         size: 25,
@@ -98,7 +92,7 @@ class _UserDetailsState extends State<UserDetails> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               TextformField(
@@ -109,51 +103,38 @@ class _UserDetailsState extends State<UserDetails> {
                   return null;
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
-              Button(
-                text: 'Save',
-                isLoading: isLoading,
-                onTap: () async {
-                  try {
+              Obx(
+                () => Button(
+                  text: 'Save',
+                  isLoading: isLoading.value,
+                  onTap: () async {
+                    isLoading.value = true;
                     final cu = FirebaseAuth.instance.currentUser;
-                    if (cu != null) {
-                      final imageName =
-                          DateTime.now().millisecondsSinceEpoch.toString();
-                      isLoading = true;
-                      setState(() {});
-                      final storageRef = FirebaseStorage.instance
-                          .ref()
-                          .child("Profile_Picture/$imageName.png");
-                      final i = await storageRef.putFile(
-                        File(imageControlller.image.value),
-                        SettableMetadata(contentType: 'image/png'),
-                      );
+                    var imageStorage =
+                        await Utils.imageStorage(imageController.image.value);
+                    await cu?.updateDisplayName(nameController.text);
+                    await cu?.updatePhotoURL(imageStorage.toString());
 
-                      final path = await i.ref.getDownloadURL();
-                      print("images:------ $path");
-
-                      AuthUser authuser = AuthUser(
-                        email: cu.email,
-                        image: path.toString(),
-                        name: nameController.text,
-                      );
-                      await FirebaseFirestore.instance
-                          .collection("Users")
-                          .doc(cu.uid)
-                          .update(authuser.toJson());
-                      Get.offAll(HomePage());
-                    }
-                  } on FirebaseStorage catch (e) {
-                    print('error-------${e}');
-                  }
-                },
-                bRadius: 10,
-                bColor: Colors.blue,
-                textColor: Colors.white,
-                height: 40,
-                width: 100,
+                    AuthUser authuser = AuthUser(
+                      email: cu?.email,
+                      image: imageStorage.toString(),
+                      name: nameController.text,
+                    );
+                    await FirebaseFirestore.instance
+                        .collection("Users")
+                        .doc(cu?.uid)
+                        .update(authuser.toJson());
+                    Get.offAll(const HomePage());
+                  },
+                  bRadius: 10,
+                  bColor: Colors.blue,
+                  textColor: Colors.white,
+                  height: 40,
+                  width: 100,
+                ),
               ),
             ],
           ),

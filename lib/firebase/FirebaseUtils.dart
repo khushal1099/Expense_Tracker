@@ -1,8 +1,11 @@
+import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/models/expense_model.dart';
 import 'package:expense_tracker/models/income_model.dart';
+import 'package:expense_tracker/utils/Utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user_model.dart';
 
 class FirebaseUtils {
@@ -11,20 +14,19 @@ class FirebaseUtils {
   static String expenses = "Expenses";
   static String incomes = "Incomes";
   static var cu = FirebaseAuth.instance.currentUser;
-  static QuerySnapshot<Map<String, dynamic>>? inc;
-  static QuerySnapshot<Map<String, dynamic>>? exp;
 
   static void addUser(User? users) {
     AuthUser authUser = AuthUser(
       name: users?.displayName ?? '',
       image: users?.photoURL ?? '',
-      email: users?.email ?? emailController.text,
+      email: users?.email ?? '',
     );
 
     FirebaseFirestore.instance
         .collection("Users")
         .doc(users?.uid)
         .set(authUser.toJson());
+    cu = users;
   }
 
   static void addExpenses(Expense expense) {
@@ -40,7 +42,6 @@ class FirebaseUtils {
         "type": expense.type,
       },
     ).then((value) {
-      print("Expense Added Successfully");
     });
   }
 
@@ -57,12 +58,11 @@ class FirebaseUtils {
         "type": income.type,
       },
     ).then((value) {
-      print("Income Added Successfully");
     });
   }
 
   static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-  getIncome() async {
+      getIncome() async {
     var result = await FirebaseFirestore.instance
         .collection("Users")
         .doc(cu?.uid)
@@ -87,5 +87,40 @@ class FirebaseUtils {
     var result =
         await FirebaseFirestore.instance.collection("Users").doc(cu?.uid).get();
     return result;
+  }
+
+  static Future<void> deleteIncomeExpense(String id, String type) async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .collection(type)
+        .doc(id)
+        .delete();
+  }
+
+  static Future<void> resetPassword(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      Utils.showSnackbar(
+        "Password Reset Email sent",
+        const Duration(seconds: 2),
+        Colors.green,
+      );
+    } on FirebaseAuthException catch (e) {
+      Utils.showSnackbar(
+        "Something went wrong ${e.code}",
+        const Duration(seconds: 2),
+        Colors.red,
+      );
+    }
+  }
+
+  static Future<UserCredential> googleLogin() async {
+    var googleSingIn = await GoogleSignIn().signIn();
+    var auth = await googleSingIn?.authentication;
+    var credential = GoogleAuthProvider.credential(
+        accessToken: auth?.accessToken, idToken: auth?.idToken);
+    var data = await FirebaseAuth.instance.signInWithCredential(credential);
+    return data;
   }
 }

@@ -6,9 +6,6 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'firebase/firebase_options.dart';
 import 'screens/authentication/login_screen.dart';
 
-TextEditingController emailController = TextEditingController();
-TextEditingController passwordController = TextEditingController();
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -25,17 +22,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var kColorScheme = ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 119, 90, 246),
-  );
-
-  var kDarkColorScheme = ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 5, 99, 125),
-  );
-
-  var kDarkScheme = ColorScheme.fromSeed(seedColor: Colors.white);
-  var kLightScheme = ColorScheme.fromSeed(seedColor: Colors.black);
-
   @override
   Widget build(BuildContext context) {
     var cu = FirebaseAuth.instance.currentUser;
