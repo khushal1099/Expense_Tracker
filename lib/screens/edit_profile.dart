@@ -9,7 +9,6 @@ import 'package:expense_tracker/widgets/Textformfield.dart';
 import 'package:expense_tracker/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/pageview_controller.dart';
 import '../utils/Utils.dart';
 
 class EditProfile extends StatelessWidget {
@@ -23,6 +22,7 @@ class EditProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    balanceController.getUserdata();
     var data = balanceController.user.value;
     name.text = data?["name"];
 
@@ -49,7 +49,7 @@ class EditProfile extends StatelessWidget {
                 child: Obx(
                   () => imageController.image.value.isEmpty
                       ? Image.network(
-                          cu?.photoURL ?? '',
+                          data?["image"] ?? '',
                           fit: BoxFit.cover,
                           frameBuilder:
                               (context, child, frame, wasSynchronouslyLoaded) {
@@ -63,6 +63,7 @@ class EditProfile extends StatelessWidget {
                         )
                       : Image.file(
                           File(imageController.image.value),
+                          fit: BoxFit.cover,
                           width: 150,
                           height: 150,
                           filterQuality: FilterQuality.low,
@@ -124,7 +125,7 @@ class EditProfile extends StatelessWidget {
               onTap: () async {
                 isLoading.value = true;
                 var imageStorage = imageController.image.value.isEmpty
-                    ? cu?.photoURL
+                    ? data!["image"]
                     : await Utils.imageStorage(
                         imageController.image.value,
                       );
@@ -141,6 +142,7 @@ class EditProfile extends StatelessWidget {
 
                 await cu?.updatePhotoURL(imageStorage.toString());
                 await cu?.updateDisplayName(name.text);
+                balanceController.getUserdata();
                 Get.back();
               },
               bRadius: 10,

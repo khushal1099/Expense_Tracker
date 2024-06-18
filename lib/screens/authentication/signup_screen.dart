@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:expense_tracker/firebase/FirebaseUtils.dart';
+import 'package:expense_tracker/screens/authentication/login_screen.dart';
 import 'package:expense_tracker/screens/user_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -114,22 +115,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           isLoading: isLoading.value,
                           onTap: () async {
                             try {
-                              var cu = FirebaseAuth.instance.currentUser;
-                              if (cu != null) {
-                                print("Already Signup");
-                              } else {
-                                if (_formkey.currentState!.validate()) {
-                                  isLoading.value = true;
-                                  UserCredential user = await FirebaseAuth
-                                      .instance
-                                      .createUserWithEmailAndPassword(
-                                          email: emailController.text,
-                                          password: passwordController.text);
-                                  FirebaseUtils.addUser(user.user);
-                                  emailController.clear();
-                                  passwordController.clear();
-                                  Get.offAll(const UserDetails());
-                                }
+                              if (_formkey.currentState!.validate()) {
+                                isLoading.value = true;
+                                UserCredential user = await FirebaseAuth
+                                    .instance
+                                    .createUserWithEmailAndPassword(
+                                        email: emailController.text,
+                                        password: passwordController.text);
+                                FirebaseUtils.addUser(user.user);
+                                emailController.clear();
+                                passwordController.clear();
+                                Get.offAll(const UserDetails());
                               }
                             } on FirebaseAuthException catch (e) {
                               print('error-------${e.message}');
@@ -210,7 +206,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: const TextStyle(color: Colors.blue),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            Get.to(() => const SignUpScreen(),
+                            Get.to(() => const LoginScreen(),
                                 transition: Transition.cupertino);
                           },
                       ),

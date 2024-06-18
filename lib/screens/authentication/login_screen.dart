@@ -39,13 +39,16 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              FadeInImage(
-                placeholder: MemoryImage(kTransparentImage),
-                image: const AssetImage(
-                  "assets/expense icon.png",
+              Hero(
+                tag: 'image',
+                child: FadeInImage(
+                  placeholder: MemoryImage(kTransparentImage),
+                  image: const AssetImage(
+                    "assets/expense icon.png",
+                  ),
+                  height: 120,
+                  width: 120,
                 ),
-                height: 120,
-                width: 120,
               ),
               const SizedBox(
                 height: 30,
@@ -114,38 +117,44 @@ class _LoginScreenState extends State<LoginScreen> {
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Reset Password'),
-                                  content: TextField(
-                                    controller: emailController,
-                                    decoration: const InputDecoration(
-                                        hintText: 'Enter your email'),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        if (emailController.text.isNotEmpty &&
-                                            emailController.text
-                                                .contains('@')) {
-                                          FirebaseUtils.resetPassword(
-                                              emailController.text);
-                                          Get.back();
-                                        } else {
-                                          Utils.showSnackbar(
-                                            "Please enter valid email",
-                                            const Duration(seconds: 2),
-                                            Colors.red,
-                                          );
-                                        }
-                                      },
-                                      child: const Text('Send'),
-                                    ),
-                                  ],
-                                );
-                              },
+                            if (emailController.text.isNotEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text('Reset Password'),
+                                    content: Text(
+                                        "Message sent on ${emailController.text}"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          if (emailController.text.isNotEmpty &&
+                                              emailController.text
+                                                  .contains('@')) {
+                                            FirebaseUtils.resetPassword(
+                                                emailController.text);
+                                            Get.back();
+                                          } else if (!emailController.text
+                                              .contains('@')) {
+                                            Utils.showSnackbar(
+                                              "Please enter valid email",
+                                              const Duration(seconds: 2),
+                                              Colors.red,
+                                            );
+                                          }
+                                        },
+                                        child: const Text('Send'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              return;
+                            }
+                            Utils.showSnackbar(
+                              "Please Enter Email",
+                              const Duration(seconds: 2),
+                              Colors.red,
                             );
                           },
                           child: const Text(

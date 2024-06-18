@@ -1,4 +1,5 @@
 import 'package:expense_tracker/screens/homepage.dart';
+import 'package:expense_tracker/screens/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +25,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    var cu = FirebaseAuth.instance.currentUser;
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: cu != null ? const HomePage() : const LoginScreen(),
+      home: SplashScreen(),
     );
   }
 }
